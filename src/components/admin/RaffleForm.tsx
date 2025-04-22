@@ -12,24 +12,22 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { RaffleFormData } from "@/integrations/supabase/types/raffles";
 
 interface RaffleFormProps {
-  initialData?: {
-    title: string;
-    description: string;
-    image: string;
-    price: number;
-    totalTickets: number;
-    startDate: string;
-    endDate: string;
-    status: 'draft' | 'active' | 'upcoming' | 'ended';
-  };
-  onSubmit: (data: any) => void;
+  initialData?: RaffleFormData;
+  onSubmit: (data: RaffleFormData) => void;
   isEditing?: boolean;
+  isSubmitting?: boolean;
 }
 
-export function RaffleForm({ initialData, onSubmit, isEditing = false }: RaffleFormProps) {
-  const [formData, setFormData] = useState(initialData || {
+export function RaffleForm({ 
+  initialData, 
+  onSubmit, 
+  isEditing = false,
+  isSubmitting = false
+}: RaffleFormProps) {
+  const [formData, setFormData] = useState<RaffleFormData>(initialData || {
     title: "",
     description: "",
     image: "",
@@ -62,12 +60,12 @@ export function RaffleForm({ initialData, onSubmit, isEditing = false }: RaffleF
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>{isEditing ? "Edit Raffle" : "Create New Raffle"}</CardTitle>
+        <CardTitle>{isEditing ? "Editar Rifa" : "Criar Nova Rifa"}</CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">Título</Label>
             <Input
               id="title"
               name="title"
@@ -78,7 +76,7 @@ export function RaffleForm({ initialData, onSubmit, isEditing = false }: RaffleF
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Descrição</Label>
             <Textarea
               id="description"
               name="description"
@@ -90,19 +88,19 @@ export function RaffleForm({ initialData, onSubmit, isEditing = false }: RaffleF
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="image">Image URL</Label>
+            <Label htmlFor="image">URL da Imagem</Label>
             <Input
               id="image"
               name="image"
               value={formData.image}
               onChange={handleChange}
-              placeholder="https://example.com/image.jpg"
+              placeholder="https://exemplo.com/imagem.jpg"
             />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="price">Ticket Price ($)</Label>
+              <Label htmlFor="price">Preço do Bilhete (R$)</Label>
               <Input
                 id="price"
                 name="price"
@@ -116,7 +114,7 @@ export function RaffleForm({ initialData, onSubmit, isEditing = false }: RaffleF
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="totalTickets">Total Tickets</Label>
+              <Label htmlFor="totalTickets">Total de Bilhetes</Label>
               <Input
                 id="totalTickets"
                 name="totalTickets"
@@ -131,7 +129,7 @@ export function RaffleForm({ initialData, onSubmit, isEditing = false }: RaffleF
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date</Label>
+              <Label htmlFor="startDate">Data de Início</Label>
               <Input
                 id="startDate"
                 name="startDate"
@@ -143,7 +141,7 @@ export function RaffleForm({ initialData, onSubmit, isEditing = false }: RaffleF
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="endDate">End Date</Label>
+              <Label htmlFor="endDate">Data de Término</Label>
               <Input
                 id="endDate"
                 name="endDate"
@@ -162,24 +160,34 @@ export function RaffleForm({ initialData, onSubmit, isEditing = false }: RaffleF
               onValueChange={handleStatusChange}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select status" />
+                <SelectValue placeholder="Selecione o status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="upcoming">Upcoming</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="ended">Ended</SelectItem>
+                <SelectItem value="draft">Rascunho</SelectItem>
+                <SelectItem value="upcoming">Em Breve</SelectItem>
+                <SelectItem value="active">Ativa</SelectItem>
+                <SelectItem value="ended">Encerrada</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </CardContent>
         
         <CardFooter className="flex justify-between">
-          <Button type="button" variant="outline">
-            Cancel
+          <Button 
+            type="button" 
+            variant="outline"
+            onClick={() => window.history.back()}
+          >
+            Cancelar
           </Button>
-          <Button type="submit" className="bg-raffle-purple hover:bg-raffle-purple/90">
-            {isEditing ? "Update Raffle" : "Create Raffle"}
+          <Button 
+            type="submit" 
+            className="bg-raffle-purple hover:bg-raffle-purple/90"
+            disabled={isSubmitting}
+          >
+            {isSubmitting 
+              ? (isEditing ? "Atualizando..." : "Criando...") 
+              : (isEditing ? "Atualizar Rifa" : "Criar Rifa")}
           </Button>
         </CardFooter>
       </form>
