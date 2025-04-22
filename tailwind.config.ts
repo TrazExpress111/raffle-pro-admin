@@ -28,6 +28,12 @@ export default {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
 				},
+                raffle: {
+                    purple: '#9b87f5',
+                    charcoal: '#403E43',
+                    softPurple: '#E5DEFF',
+                    orange: '#F97316',
+                },
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))'
