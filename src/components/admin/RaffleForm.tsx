@@ -49,7 +49,10 @@ export function RaffleForm({
   };
 
   const handleStatusChange = (value: string) => {
-    setFormData(prev => ({ ...prev, status: value }));
+    // Ensure we only set valid status values
+    if (value === 'draft' || value === 'active' || value === 'upcoming' || value === 'ended') {
+      setFormData(prev => ({ ...prev, status: value as 'draft' | 'active' | 'upcoming' | 'ended' }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {

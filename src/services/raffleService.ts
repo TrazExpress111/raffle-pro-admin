@@ -19,7 +19,8 @@ export const fetchRaffles = async (): Promise<Raffle[]> => {
     return [];
   }
 
-  return data || [];
+  // Cast the returned data to ensure it matches our Raffle type
+  return (data || []) as Raffle[];
 };
 
 export const fetchRaffle = async (id: string): Promise<Raffle | null> => {
@@ -39,10 +40,20 @@ export const fetchRaffle = async (id: string): Promise<Raffle | null> => {
     return null;
   }
 
-  return data;
+  return data as Raffle;
 };
 
 export const createRaffle = async (formData: RaffleFormData): Promise<Raffle | null> => {
+  // Validate status before sending to database
+  if (!['draft', 'active', 'upcoming', 'ended'].includes(formData.status)) {
+    toast({
+      title: "Erro ao criar rifa",
+      description: "Status inválido",
+      variant: "destructive",
+    });
+    return null;
+  }
+
   // Convert from form data format to database format
   const raffleData = {
     title: formData.title,
@@ -76,10 +87,20 @@ export const createRaffle = async (formData: RaffleFormData): Promise<Raffle | n
     description: "A rifa foi adicionada ao sistema.",
   });
 
-  return data;
+  return data as Raffle;
 };
 
 export const updateRaffle = async (id: string, formData: RaffleFormData): Promise<Raffle | null> => {
+  // Validate status before sending to database
+  if (!['draft', 'active', 'upcoming', 'ended'].includes(formData.status)) {
+    toast({
+      title: "Erro ao atualizar rifa",
+      description: "Status inválido",
+      variant: "destructive",
+    });
+    return null;
+  }
+  
   // Convert from form data format to database format
   const raffleData = {
     title: formData.title,
@@ -114,7 +135,7 @@ export const updateRaffle = async (id: string, formData: RaffleFormData): Promis
     description: "As alterações foram salvas.",
   });
 
-  return data;
+  return data as Raffle;
 };
 
 export const deleteRaffle = async (id: string): Promise<boolean> => {
